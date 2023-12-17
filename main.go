@@ -1,6 +1,7 @@
 package main
 
 import (
+	"database/sql"
 	"net/http"
 	"strconv"
 
@@ -38,8 +39,13 @@ func getEvent(context *gin.Context) {
 	}
 	event, err := models.GetEvent(id)
 	if err != nil {
-		context.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
+		if err == sql.ErrNoRows {
+			context.JSON(http.StatusNotFound, gin.H{"error": "event not found"})
+			return
+		} else {
+			context.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
 	}
 	context.JSON(http.StatusOK, event)
 }
