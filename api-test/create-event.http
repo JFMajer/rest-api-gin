@@ -1,0 +1,10 @@
+POST http://localhost:8080/events
+Content-Type: application/json
+
+{
+    "Name": "Tech Conference 2023",
+    "Description": "Annual conference for tech enthusiasts.",
+    "Location": "Convention Center",
+    "DateTime": "2023-09-12T09:00:00Z"
+}
+
