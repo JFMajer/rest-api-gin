@@ -7,18 +7,17 @@ import (
 )
 
 type Event struct {
-	ID int
-	Name string `binding:"required"`
-	Description string `binding:"required"`
-	Location string `binding:"required"`
-	DateTime time.Time `binding:"required"`
-	UserID int
+	ID          int
+	Name        string    `binding:"required"`
+	Description string    `binding:"required"`
+	Location    string    `binding:"required"`
+	DateTime    time.Time `binding:"required"`
+	UserID      int
 }
 
-
 func (e *Event) Save() (int, error) {
-	query := 
-	`INSERT INTO events (name, description, location, dateTime, user_id) 
+	query :=
+		`INSERT INTO events (name, description, location, dateTime, user_id) 
 	VALUES (?, ?, ?, ?, ?)`
 	statement, err := db.DB.Prepare(query)
 	if err != nil {
@@ -66,8 +65,23 @@ func GetAllEvents() ([]*Event, error) {
 		events = append(events, event)
 	}
 	if err = rows.Err(); err != nil {
-        return nil, err
-    }
+		return nil, err
+	}
 
 	return events, nil
+}
+
+func (e *Event) Update() error {
+	query := "UPDATE events SET name = ?, description = ?, location = ?, dateTime = ? WHERE id = ?"
+	statement, err := db.DB.Prepare(query)
+	if err != nil {
+		return err
+	}
+	defer statement.Close()
+	_, err = statement.Exec(e.Name, e.Description, e.Location, e.DateTime, e.ID)
+	if err != nil {
+		return err
+	}
+	return nil
+
 }

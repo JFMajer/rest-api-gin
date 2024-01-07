@@ -1,0 +1,9 @@
+PUT http://localhost:8080/events/3
+Content-Type: application/json
+
+{
+    "Name": "Winter Music Concert",
+    "Description": "A delightful evening of classical music performances.",
+    "Location": "Grand Opera House in New York",
+    "DateTime": "2023-12-15T19:00:00Z"
+}
