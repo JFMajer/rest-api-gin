@@ -83,8 +83,35 @@ func updateEvent(context *gin.Context) {
 	updatedEvent.ID = id
 	err = updatedEvent.Update()
 	if err != nil {
-		context.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		context.JSON(http.StatusInternalServerError, gin.H{"message": "could not update event", "error": err.Error()})
 		return
 	}
 	context.JSON(http.StatusOK, gin.H{"message": "event updated", "event": updatedEvent})
+}
+
+func deleteEvent(context *gin.Context) {
+	idStr := context.Param("id")
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		context.JSON(http.StatusBadRequest, gin.H{"error": "invalid id"})
+		return
+	}
+
+	_, err = models.GetEvent(id)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			context.JSON(http.StatusNotFound, gin.H{"error": "event not found"})
+			return
+		} else {
+			context.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+	}
+
+	err = models.Delete(id)
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	context.JSON(http.StatusOK, gin.H{"message": "event deleted"})
 }
