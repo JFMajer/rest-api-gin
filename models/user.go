@@ -5,9 +5,9 @@ import (
 )
 
 type User struct {
-	ID       int64
-	email    string `binding:"required"`
-	password string `binding:"required"`
+	ID       int64  `json:"id"`
+	Email    string `json:"email" binding:"required,email"`
+	Password string `json:"password" binding:"required"`
 }
 
 func (u *User) Save() (int, error) {
@@ -20,7 +20,7 @@ func (u *User) Save() (int, error) {
 		return 0, err
 	}
 	defer statement.Close()
-	result, err := statement.Exec(u.email, u.password)
+	result, err := statement.Exec(u.Email, u.Password)
 	if err != nil {
 		return 0, err
 	}

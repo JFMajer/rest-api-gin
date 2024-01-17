@@ -21,6 +21,10 @@ func createUser(context *gin.Context) {
 		return
 	}
 
-	context.JSON(http.StatusCreated, gin.H{"message": "user created", "user": user})
+	context.JSON(http.StatusCreated, gin.H{
+		"message": "user created",
+		"userID":  user.ID,
+		"email":   user.Email,
+	})
 
 }
