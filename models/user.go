@@ -2,7 +2,7 @@ package models
 
 import (
 	"github.com/JFMajer/rest-api-gin/db"
-	"golang.org/x/crypto/bcrypt"
+	"github.com/JFMajer/rest-api-gin/utils"
 )
 
 type User struct {
@@ -12,7 +12,7 @@ type User struct {
 }
 
 func (u *User) Save() (int, error) {
-	passwordHash, err := hashPassword(u.Password)
+	passwordHash, err := utils.HashPassword(u.Password)
 	if err != nil {
 		return 0, err
 	}
@@ -40,12 +40,4 @@ func (u *User) Save() (int, error) {
 
 	return int(lastId), nil
 
-}
-
-func hashPassword(password string) (string, error) {
-	bytes, err := bcrypt.GenerateFromPassword([]byte(password), 14)
-	if err != nil {
-		return "", err
-	}
-	return string(bytes), nil
 }
