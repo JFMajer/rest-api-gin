@@ -2,7 +2,7 @@ POST http://localhost:8080/signup
 Content-Type: application/json
 
 {
-    "email": "text2@example.com",
+    "email": "text3@example.com",
     "password": "testing123"
 }
 

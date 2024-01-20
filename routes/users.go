@@ -26,5 +26,16 @@ func createUser(context *gin.Context) {
 		"userID":  user.ID,
 		"email":   user.Email,
 	})
+}
 
+func getUsers(context *gin.Context) {
+	users, err := models.GetUsers()
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	context.JSON(http.StatusOK, gin.H{
+		"users": users,
+	})
 }
