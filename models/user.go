@@ -1,6 +1,7 @@
 package models
 
 import (
+	"database/sql"
 	"errors"
 
 	"github.com/JFMajer/rest-api-gin/db"
@@ -10,7 +11,7 @@ import (
 type User struct {
 	ID       int64  `json:"id"`
 	Email    string `json:"email" binding:"required,email"`
-	Password string `json:"-" binding:"required"`
+	Password string `json:"password" binding:"required"`
 }
 
 func (u *User) Save() (int, error) {
@@ -68,14 +69,19 @@ func GetUsers() ([]User, error) {
 
 func (u *User) ValidateCredentials() error {
 	query :=
-		`SELECT password FROM users WHERE email = ?`
+		`SELECT id, password FROM users WHERE email = ?`
 
 	row := db.DB.QueryRow(query, u.Email)
 
 	var retrievedPassword string
-	err := row.Scan(&retrievedPassword)
+	err := row.Scan(&u.ID, &retrievedPassword)
 	if err != nil {
-		return err
+		if err == sql.ErrNoRows {
+			// User does not exist
+			return errors.New("invalid credentials")
+		}
+		// Other error
+		return errors.New("invalid credentials")
 	}
 
 	passOK := utils.VerifyPassword(retrievedPassword, u.Password)
