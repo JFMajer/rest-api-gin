@@ -28,6 +28,22 @@ func createUser(context *gin.Context) {
 	})
 }
 
+func login(context *gin.Context) {
+	var user models.User
+	err := context.ShouldBindJSON(&user)
+	if err != nil {
+		context.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	err = user.ValidateCredentials()
+	if err != nil {
+		context.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+		return
+	}
+
+}
+
 func getUsers(context *gin.Context) {
 	users, err := models.GetUsers()
 	if err != nil {

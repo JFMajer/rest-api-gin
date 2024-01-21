@@ -1,6 +1,8 @@
 package models
 
 import (
+	"errors"
+
 	"github.com/JFMajer/rest-api-gin/db"
 	"github.com/JFMajer/rest-api-gin/utils"
 )
@@ -62,4 +64,24 @@ func GetUsers() ([]User, error) {
 	}
 
 	return users, nil
+}
+
+func (u *User) ValidateCredentials() error {
+	query :=
+		`SELECT password FROM users WHERE email = ?`
+
+	row := db.DB.QueryRow(query, u.Email)
+
+	var retrievedPassword string
+	err := row.Scan(&retrievedPassword)
+	if err != nil {
+		return err
+	}
+
+	passOK := utils.VerifyPassword(retrievedPassword, u.Password)
+	if !passOK {
+		return errors.New("invalid credentials")
+	}
+
+	return nil
 }
