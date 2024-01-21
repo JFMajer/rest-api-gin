@@ -7,12 +7,12 @@ import (
 )
 
 type Event struct {
-	ID          int
+	ID          int64
 	Name        string    `binding:"required"`
 	Description string    `binding:"required"`
 	Location    string    `binding:"required"`
 	DateTime    time.Time `binding:"required"`
-	UserID      int
+	UserID      int64
 }
 
 func (e *Event) Save() (int, error) {
@@ -32,7 +32,7 @@ func (e *Event) Save() (int, error) {
 	if err != nil {
 		return 0, err
 	}
-	e.ID = int(lastId)
+	e.ID = int64(lastId)
 	return int(lastId), err
 }
 

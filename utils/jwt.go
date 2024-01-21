@@ -24,7 +24,7 @@ func GenerateToken(email string, userId int64) (string, error) {
 	return token.SignedString([]byte(secretKey))
 }
 
-func VerifyToken(tokenString string) error {
+func VerifyToken(tokenString string) (int64, error) {
 	// Retrieve the secret key the same way as in GenerateToken
 	secretKey := os.Getenv("JWT_SECRET")
 	if secretKey == "" {
@@ -43,21 +43,25 @@ func VerifyToken(tokenString string) error {
 	})
 
 	if err != nil {
-		return err
+		return 0, err
 	}
 
 	isTokenValid := parsedToken.Valid
 	if !isTokenValid {
-		return errors.New("invalid token")
+		return 0, errors.New("invalid token")
 	}
 
-	// claims, ok := parsedToken.Claims.(jwt.MapClaims)
-	// if !ok {
-	// 	return nil, errors.New("invalid token claims")
-	// }
+	claims, ok := parsedToken.Claims.(jwt.MapClaims)
+	if !ok {
+		return 0, errors.New("invalid token claims")
+	}
 
-	// email := claims["email"].(string)
-	// userId := claims["userId"].(int64)
+	userIdFloat, ok := claims["userId"].(float64) // Assert the value is float64
+	if !ok {
+		return 0, errors.New("userId is not a valid number")
+	}
 
-	return nil
+	userId := int64(userIdFloat) // Convert float64 to int64
+
+	return userId, nil
 }

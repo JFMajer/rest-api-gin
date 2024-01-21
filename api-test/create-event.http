@@ -1,6 +1,6 @@
 POST http://localhost:8080/events
 Content-Type: application/json
-Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRlc3Q0QGV4YW1wbGUuY29tIiwiZXhwIjoxNzA1ODY1Njg5LCJ1c2VySWQiOjF9.OqQMlvsp71cE_9E6SetICb5jfGPpZpJ5ZYqmhIUzGe0
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRlc3RAZXhhbXBsZS5jb20iLCJleHAiOjE3MDU4NjY0MzMsInVzZXJJZCI6Mn0.sGfAb2Ub3ixHW3gEXvFvARi-0hKmm4CbKX580DA8-0Y
 
 {
     "Name": "Tech Conference 2023",
