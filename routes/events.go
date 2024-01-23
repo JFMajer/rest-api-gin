@@ -64,7 +64,8 @@ func updateEvent(context *gin.Context) {
 		return
 	}
 
-	_, err = models.GetEvent(id)
+	userId := context.GetInt64("userId")
+	event, err := models.GetEvent(id)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			context.JSON(http.StatusNotFound, gin.H{"error": "event not found"})
@@ -73,6 +74,11 @@ func updateEvent(context *gin.Context) {
 			context.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
+	}
+
+	if event.UserID != userId {
+		context.JSON(http.StatusForbidden, gin.H{"error": "forbidden"})
+		return
 	}
 
 	var updatedEvent models.Event
@@ -99,7 +105,8 @@ func deleteEvent(context *gin.Context) {
 		return
 	}
 
-	_, err = models.GetEvent(id)
+	userId := context.GetInt64("userId")
+	event, err := models.GetEvent(id)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			context.JSON(http.StatusNotFound, gin.H{"error": "event not found"})
@@ -108,6 +115,11 @@ func deleteEvent(context *gin.Context) {
 			context.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
+	}
+
+	if event.UserID != userId {
+		context.JSON(http.StatusForbidden, gin.H{"error": "forbidden"})
+		return
 	}
 
 	err = models.Delete(id)
