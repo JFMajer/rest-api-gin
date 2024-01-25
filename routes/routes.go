@@ -9,6 +9,7 @@ func RegisterRoutes(server *gin.Engine) {
 	server.GET("/events", getEvents)
 	server.GET("/events/:id", getEvent)
 	server.POST("/signup", createUser)
+	server.GET("/registrations", getRegistrations)
 	// generates JWT
 	server.POST("/login", login)
 	server.GET("/users", getUsers)
@@ -18,4 +19,6 @@ func RegisterRoutes(server *gin.Engine) {
 	authenticated.POST("/events", createEvent)
 	authenticated.PUT("/events/:id", updateEvent)
 	authenticated.DELETE("/events/:id", deleteEvent)
+	authenticated.POST("/events/:id/register", registerForEvent)
+	authenticated.DELETE("/events/:id/register", cancelRegistration)
 }

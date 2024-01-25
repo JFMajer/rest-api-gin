@@ -15,6 +15,12 @@ type Event struct {
 	UserID      int64
 }
 
+type Registration struct {
+	ID      int64
+	UserID  int64
+	EventID int64
+}
+
 func (e *Event) Save() (int, error) {
 	query :=
 		`INSERT INTO events (name, description, location, dateTime, user_id) 
@@ -93,6 +99,61 @@ func Delete(id int) error {
 	}
 	defer statement.Close()
 	_, err = statement.Exec(id)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func GetRegistrations() ([]*Registration, error) {
+	query := "SELECT * FROM registrations"
+	rows, err := db.DB.Query(query)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	registrations := []*Registration{}
+	for rows.Next() {
+		registration := &Registration{}
+		err := rows.Scan(&registration.ID, &registration.UserID, &registration.EventID)
+		if err != nil {
+			return nil, err
+		}
+		registrations = append(registrations, registration)
+	}
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return registrations, nil
+
+}
+
+func (e *Event) RegisterUser(userId int64) error {
+	query := "INSERT into registrations (user_id, event_id) VALUES (?, ?)"
+	statement, err := db.DB.Prepare(query)
+	if err != nil {
+		return err
+	}
+	defer statement.Close()
+
+	_, err = statement.Exec(userId, e.ID)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (e *Event) CancelRegistration(userId int64) error {
+	query := "DELETE FROM registrations WHERE user_id = ? AND event_id = ?"
+	statement, err := db.DB.Prepare(query)
+	if err != nil {
+		return err
+	}
+	defer statement.Close()
+
+	_, err = statement.Exec(userId, e.ID)
 	if err != nil {
 		return err
 	}
